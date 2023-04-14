@@ -2,8 +2,12 @@
 #include "./headers/Game.h"
 #include <SFML/Graphics.hpp>
 
+
 int main()
 {
     Game game;
-    game.run();
+    while (true)
+    {
+        game.run();
+    }
 }

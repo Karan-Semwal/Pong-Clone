@@ -2,8 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#define BALL_VELOCITY 0.3f
-#define BALL_INITIAL_VELOCITY 0.1f
+#define BALL_VELOCITY 10.5f
+#define WALL_VELOCITY 8.5f
+
+#define BALL_INITIAL_VELOCITY_X 5.f
+#define BALL_INITIAL_VELOCITY_Y 3.5f
 
 class Game
 {
@@ -22,7 +25,7 @@ public:
 	// score is updated if the ball hits left or right wall
 	void updateScore();
 
-	bool isColliding();
+	bool isColliding(sf::RectangleShape object);
 	void onCollision();
 
 	void ballMovement();
@@ -36,10 +39,10 @@ private:
 	void setup();
 
 private:
-	sf::RenderWindow   m_GameWindow;      /////////////////////
+	sf::RenderWindow   m_GameWindow;
 
-	sf::RectangleShape m_RightWall;
-	sf::RectangleShape m_LeftWall;
+	sf::RectangleShape m_RightPaddle;
+	sf::RectangleShape m_LeftPaddle;
 	sf::CircleShape    m_ball;
 
 	sf::RectangleShape m_middleLine;

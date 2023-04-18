@@ -1,13 +1,14 @@
 #include "./headers/Game.h"
 #include <iostream>
+#include <math.h>
 
 
 Game::Game() :
 	  m_GameWindow  (sf::VideoMode(800, 600), "Pong", sf::Style::Close),
-      m_LeftWall    (sf::Vector2f (20.0f, 140.0f)),
-	  m_RightWall   (sf::Vector2f (20.0f, 140.0f)),
-	  m_ballVelocity(sf::Vector2f (BALL_INITIAL_VELOCITY, BALL_INITIAL_VELOCITY)),
-	  m_wallVelocity(sf::Vector2f (0.18f, 0.18f)),
+      m_LeftPaddle    (sf::Vector2f (14.0f, 140.0f)),
+	  m_RightPaddle   (sf::Vector2f (14.0f, 140.0f)),
+	  m_ballVelocity(sf::Vector2f (BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y)),
+	  m_wallVelocity(sf::Vector2f (WALL_VELOCITY, WALL_VELOCITY)),
 	  m_LeftScore (0),
       m_RightScore(0)
 {
@@ -20,6 +21,8 @@ Game::~Game()
 
 void Game::run()
 {
+	m_GameWindow.setFramerateLimit(60);
+
 	while (m_GameWindow.isOpen())
 	{
 		if (checkWin()) 
@@ -36,8 +39,6 @@ void Game::run()
 
 void Game::resetGame()
 {
-	m_ballVelocity = sf::Vector2f(0.1f, 0.1f);
-	m_wallVelocity = sf::Vector2f(0.1f, 0.1f);
 	m_LeftScore  = 0;
 	m_RightScore = 0;
 
@@ -62,7 +63,7 @@ void Game::updateScore()
 		// update score on screen
 		m_RightScoreOnWindow.setString(std::to_string(m_RightScore));
 		// reset ball speed
-		m_ballVelocity = sf::Vector2f(BALL_INITIAL_VELOCITY, BALL_INITIAL_VELOCITY);
+		m_ballVelocity = sf::Vector2f(m_LeftScore % 2 == 0 ? BALL_INITIAL_VELOCITY_X : -BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y);
 	}
 
 	// ball hits right wall
@@ -73,7 +74,7 @@ void Game::updateScore()
 		// update score on screen
 		m_LeftScoreOnWindow.setString(std::to_string(m_LeftScore));
 		// reset ball speed
-		m_ballVelocity = sf::Vector2f(BALL_INITIAL_VELOCITY, BALL_INITIAL_VELOCITY);
+		m_ballVelocity = sf::Vector2f(BALL_INITIAL_VELOCITY_Y, BALL_INITIAL_VELOCITY_Y);
 	}
 
 }
@@ -82,23 +83,21 @@ void Game::ballMovement()
 {
 	sf::Vector2f objectPos = m_ball.getPosition();
 
-	if (m_ball.getPosition().y > getWindowHeight() || m_ball.getPosition().y < 0)
+	if (objectPos.y > getWindowHeight() - m_ball.getRadius() || m_ball.getPosition().y - m_ball.getRadius() < 0)
 	{
 		m_ballVelocity.y *= -1;
 	}
 
+	// ball's continuous movement
 	objectPos.x += m_ballVelocity.x;
 	objectPos.y += m_ballVelocity.y;
 
 	m_ball.setPosition(objectPos);
 }
 
-bool Game::isColliding()
+bool Game::isColliding(sf::RectangleShape object)
 {
-	if (m_ball.getGlobalBounds().intersects(m_LeftWall.getGlobalBounds()))
-		return true;
-
-	if (m_ball.getGlobalBounds().intersects(m_RightWall.getGlobalBounds()))
+	if (m_ball.getGlobalBounds().intersects(object.getGlobalBounds()))
 		return true;
 
 	return false;
@@ -106,66 +105,78 @@ bool Game::isColliding()
 
 void Game::onCollision()
 {
-	if (isColliding())
+	if (isColliding(m_LeftPaddle))
 	{
+		//increase ball veloctity at first collision
 		if (m_ballVelocity.x < 0) {
 			m_ballVelocity.x = -BALL_VELOCITY;
 		}
-		m_ballVelocity.x = BALL_VELOCITY;
+		else {
+			m_ballVelocity.x = BALL_VELOCITY;
+		}
 
 		if (m_ballVelocity.y < 0) {
 			m_ballVelocity.y = -BALL_VELOCITY;
 		}
-		m_ballVelocity.y = BALL_VELOCITY;
+		else {
+			m_ballVelocity.y = BALL_VELOCITY;
+		}
 
 		m_ballVelocity.x *= -1;
-		m_ball.setPosition(m_ball.getPosition().x + m_ballVelocity.x, m_ball.getPosition().y + m_ballVelocity.y);
+	}
 
-		// for objects pause scenerio on collision
-		if (isColliding())
-		{
-			m_ballVelocity.x *= -1;
-			m_ballVelocity.y *= -1;
-
-			while (isColliding())
-			{
-				m_ball.setPosition(m_ball.getPosition().x + m_ballVelocity.x, m_ball.getPosition().y + m_ballVelocity.y);
-			}
+	if (isColliding(m_RightPaddle))
+	{
+		//increase ball veloctity at first collision
+		if (m_ballVelocity.x < 0) {
+			m_ballVelocity.x = -BALL_VELOCITY;
 		}
+		else {
+			m_ballVelocity.x = BALL_VELOCITY;
+		}
+
+		if (m_ballVelocity.y < 0) {
+			m_ballVelocity.y = -BALL_VELOCITY;
+		}
+		else {
+			m_ballVelocity.y = BALL_VELOCITY;
+		}
+
+		m_ballVelocity.x *= -1;
 	}
 }
 
 void Game::LeftWallMovement()
 {
-	sf::Vector2f objectPos = m_LeftWall.getPosition();
+	sf::Vector2f objectPos = m_LeftPaddle.getPosition();
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && (m_LeftWall.getPosition().y - m_LeftWall.getSize().y / 2) > 0 )
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && (m_LeftPaddle.getPosition().y - m_LeftPaddle.getSize().y / 2) > 0 )
 	{
 		objectPos.y -= m_wallVelocity.y;
-		m_LeftWall.setPosition(objectPos);
+		m_LeftPaddle.setPosition(objectPos);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (m_LeftWall.getPosition().y + m_LeftWall.getSize().y / 2) < getWindowHeight())
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (m_LeftPaddle.getPosition().y + m_LeftPaddle.getSize().y / 2) < getWindowHeight())
 	{
 		objectPos.y += m_wallVelocity.y;
-		m_LeftWall.setPosition(objectPos);
+		m_LeftPaddle.setPosition(objectPos);
 	}
 }
 
 void Game::RightWallMovement()
 {
-	sf::Vector2f objectPos = m_RightWall.getPosition();
+	sf::Vector2f objectPos = m_RightPaddle.getPosition();
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (m_RightWall.getPosition().y - m_RightWall.getSize().y / 2) > 0)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (m_RightPaddle.getPosition().y - m_RightPaddle.getSize().y / 2) > 0)
 	{
 		objectPos.y -= m_wallVelocity.y;
-		m_RightWall.setPosition(objectPos);
+		m_RightPaddle.setPosition(objectPos);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (m_RightWall.getPosition().y + m_RightWall.getSize().y / 2 ) < getWindowHeight())
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (m_RightPaddle.getPosition().y + m_RightPaddle.getSize().y / 2 ) < getWindowHeight())
 	{
 		objectPos.y += m_wallVelocity.y;
-		m_RightWall.setPosition(objectPos);
+		m_RightPaddle.setPosition(objectPos);
 	}
 }
 
@@ -199,8 +210,8 @@ void Game::render()
 	m_GameWindow.draw(m_LeftScoreOnWindow);
 	m_GameWindow.draw(m_RightScoreOnWindow);
 	m_GameWindow.draw(m_ball);
-	m_GameWindow.draw(m_LeftWall);
-	m_GameWindow.draw(m_RightWall);
+	m_GameWindow.draw(m_LeftPaddle);
+	m_GameWindow.draw(m_RightPaddle);
 
 	m_GameWindow.display();
 }
@@ -214,20 +225,20 @@ void Game::setup()
 	m_ball.setFillColor(sf::Color::White);
 
 	/// LEFT WALL ///
-	m_LeftWall.setFillColor(sf::Color::White);
-	m_LeftWall.setOrigin(m_LeftWall.getSize().x / 2.0f, m_LeftWall.getSize().y / 2.0f);
-	m_LeftWall.setPosition(0 + m_LeftWall.getSize().x, (float)getWindowHeight() / 2);
+	m_LeftPaddle.setFillColor(sf::Color::White);
+	m_LeftPaddle.setOrigin(m_LeftPaddle.getSize().x / 2.0f, m_LeftPaddle.getSize().y / 2.0f);
+	m_LeftPaddle.setPosition(0 + m_LeftPaddle.getSize().x, (float)getWindowHeight() / 2);
 
 	/// RIGHT WALL ///
-	m_RightWall.setFillColor(sf::Color::White);
-	m_RightWall.setOrigin(m_RightWall.getSize().x / 2.0f, m_RightWall.getSize().y / 2.0f);
-	m_RightWall.setPosition((float)getWindowWidth() - m_RightWall.getSize().x, (float)getWindowHeight() / 2);
+	m_RightPaddle.setFillColor(sf::Color::White);
+	m_RightPaddle.setOrigin(m_RightPaddle.getSize().x / 2.0f, m_RightPaddle.getSize().y / 2.0f);
+	m_RightPaddle.setPosition((float)getWindowWidth() - m_RightPaddle.getSize().x, (float)getWindowHeight() / 2);
 
 	/// MIDDLE LINE ///
 	sf::Texture middleLineTexture;
 	m_middleLine.setSize(sf::Vector2f(10.0f, (float)getWindowHeight()));
 	m_middleLine.setPosition((float)getWindowWidth() / 2, 0.0f);
-	m_middleLine.setTexture(&middleLineTexture);
+	//m_middleLine.setTexture(&middleLineTexture);
 
 	/// FONT FOR SCORE ///
 	if (!m_scoreFont.loadFromFile("./resources/fonts/dogicapixel.ttf"))

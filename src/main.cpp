@@ -6,8 +6,13 @@
 int main()
 {
     Game game;
+
     while (true)
     {
-        game.run();
+        game.renderGameStateBeforePLayingState();
+        if (game.spaceBarPressed())
+        {
+            game.run();
+        }
     }
 }

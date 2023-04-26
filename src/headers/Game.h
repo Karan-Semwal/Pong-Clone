@@ -2,6 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#define WIDTH  850
+#define HEIGHT 600
+
 #define BALL_VELOCITY 10.5f
 #define WALL_VELOCITY 8.5f
 
@@ -16,6 +19,9 @@ public:
 
 	unsigned int getWindowWidth()  const { return m_GameWindow.getSize().x; }
 	unsigned int getWindowHeight() const { return m_GameWindow.getSize().y; }
+
+    bool spaceBarPressed();
+    void renderGameStateBeforePLayingState();
 
 	void run();
 	void resetGame();
@@ -40,6 +46,9 @@ private:
 
 private:
 	sf::RenderWindow   m_GameWindow;
+
+    sf::RectangleShape m_gameMenu;
+    sf::Texture m_gameMenuText;
 
 	sf::RectangleShape m_RightPaddle;
 	sf::RectangleShape m_LeftPaddle;

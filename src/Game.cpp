@@ -2,14 +2,14 @@
 #include <iostream>
 #include <math.h>
 
-
 Game::Game() :
-	  m_GameWindow  (sf::VideoMode(800, 600), "Pong", sf::Style::Close),
-      m_LeftPaddle    (sf::Vector2f (14.0f, 140.0f)),
-	  m_RightPaddle   (sf::Vector2f (14.0f, 140.0f)),
+	  m_GameWindow  (sf::VideoMode(WIDTH, HEIGHT), "Pong", sf::Style::Close),
+      m_LeftPaddle    (sf::Vector2f (14.0f, 120.0f)),    // left paddle width & height
+	  m_RightPaddle   (sf::Vector2f (14.0f, 120.0f)),    // right paddle width & height
 	  m_ballVelocity(sf::Vector2f (BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y)),
 	  m_wallVelocity(sf::Vector2f (WALL_VELOCITY, WALL_VELOCITY)),
-	  m_LeftScore (0),
+      m_gameMenu(sf::Vector2f(WIDTH, HEIGHT)),
+	  m_LeftScore (0),      // initial left & right score
       m_RightScore(0)
 {
 	setup();
@@ -19,20 +19,31 @@ Game::~Game()
 {
 }
 
+bool Game::spaceBarPressed()
+{
+    return sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+}
+
+void Game::renderGameStateBeforePLayingState()
+{
+    m_GameWindow.draw(m_gameMenu);
+    m_GameWindow.display();
+}
+
 void Game::run()
 {
 	m_GameWindow.setFramerateLimit(60);
 
 	while (m_GameWindow.isOpen())
 	{
-		if (checkWin()) 
+		if (checkWin() == true) 
 		{
 			resetGame();
 			break;
 		}
-
-		processEvents();
-		update();
+        
+        processEvents();
+        update();
 		render();
 	}
 }
@@ -188,7 +199,7 @@ void Game::processEvents()
 		if (event.type == sf::Event::Closed)
 			m_GameWindow.close();
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 			m_GameWindow.close();
 	}
 }
@@ -219,7 +230,7 @@ void Game::render()
 void Game::setup()
 {
 	/// BALL ///
-	m_ball.setRadius(15.f);
+	m_ball.setRadius(13.f);
 	m_ball.setOrigin(m_ball.getRadius(), m_ball.getRadius());
 	m_ball.setPosition ((float)getWindowWidth() / 2, (float)getWindowHeight() / 2);
 	m_ball.setFillColor(sf::Color::White);
@@ -238,7 +249,6 @@ void Game::setup()
 	sf::Texture middleLineTexture;
 	m_middleLine.setSize(sf::Vector2f(10.0f, (float)getWindowHeight()));
 	m_middleLine.setPosition((float)getWindowWidth() / 2, 0.0f);
-	//m_middleLine.setTexture(&middleLineTexture);
 
 	/// FONT FOR SCORE ///
 	if (!m_scoreFont.loadFromFile("./resources/fonts/dogicapixel.ttf"))
@@ -256,6 +266,9 @@ void Game::setup()
 	m_RightScoreOnWindow.setFont(m_scoreFont);
 	m_RightScoreOnWindow.setPosition(m_middleLine.getPosition().x + m_middleLine.getPosition().x / 2, (float)getWindowHeight() / 12);
 
+    // GAME MENU
+    m_gameMenuText.loadFromFile("./resources/textures/Pong_game_menu.png");
+    m_gameMenu.setTexture(&m_gameMenuText);
 
 }
 

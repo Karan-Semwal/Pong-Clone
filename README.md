@@ -22,4 +22,4 @@
 
 ## Game Preview
 
-![](https://github.com/Karansemwal/Pong-Clone/img/Pong_game_clip.gif)
+![](https://github.com/Karansemwal/Pong-Clone/blob/main/img/Pong_game_clip.gif)

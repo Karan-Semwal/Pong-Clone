@@ -4,11 +4,11 @@
 
 Game::Game() :
 	  m_GameWindow  (sf::VideoMode(WIDTH, HEIGHT), "Pong", sf::Style::Close),
-      m_LeftPaddle    (sf::Vector2f (14.0f, 120.0f)),    // left paddle width & height
-	  m_RightPaddle   (sf::Vector2f (14.0f, 120.0f)),    // right paddle width & height
+      m_LeftPaddle  (sf::Vector2f (14.0f, 120.0f)),    // left paddle width & height
+	  m_RightPaddle (sf::Vector2f (14.0f, 120.0f)),    // right paddle width & height
 	  m_ballVelocity(sf::Vector2f (BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y)),
 	  m_wallVelocity(sf::Vector2f (WALL_VELOCITY, WALL_VELOCITY)),
-      m_gameMenu(sf::Vector2f(WIDTH, HEIGHT)),
+      m_gameMenu    (sf::Vector2f(WIDTH, HEIGHT)),
 	  m_LeftScore (0),      // initial left & right score
       m_RightScore(0)
 {

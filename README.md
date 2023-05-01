@@ -27,7 +27,11 @@
 
 2. Clone repository: `git clone https://github.com/Karansemwal/Pong-Clone.git`
 
-3. For g++: `make g++ run`
+3. `cd <path to repo>`
+
+4. `mkdir bin`
+
+5. For g++: `make g++ run`
 
    For clang: `make clang run`
 

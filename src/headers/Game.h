@@ -21,7 +21,7 @@ public:
 	unsigned int getWindowHeight() const { return m_GameWindow.getSize().y; }
 
     bool spaceBarPressed();
-    void renderGameStateBeforePLayingState();
+    void renderGameMenu();
 
 	void run();
 	void resetGame();
@@ -66,5 +66,6 @@ private:
 	sf::Text m_RightScoreOnWindow;
 
 	sf::Font m_scoreFont;
+	bool isplaying;
 };
 

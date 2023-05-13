@@ -35,5 +35,5 @@ run:
 	./Pong
 
 clean:
-	rm -rf Pong
-	rm -rf $(Exec_Dir)*.o
+	@rm -rf Pong
+	@rm -rf $(Exec_Dir)*.o

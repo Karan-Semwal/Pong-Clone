@@ -10,7 +10,8 @@ Game::Game() :
 	  m_wallVelocity(sf::Vector2f (WALL_VELOCITY, WALL_VELOCITY)),
       m_gameMenu    (sf::Vector2f(WIDTH, HEIGHT)),
 	  m_LeftScore (0),      // initial left & right score
-      m_RightScore(0)
+      m_RightScore(0),
+	  isplaying(false)
 {
 	setup();
 }
@@ -24,7 +25,7 @@ bool Game::spaceBarPressed()
     return sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
 }
 
-void Game::renderGameStateBeforePLayingState()
+void Game::renderGameMenu()
 {
     m_GameWindow.draw(m_gameMenu);
     m_GameWindow.display();
@@ -33,18 +34,26 @@ void Game::renderGameStateBeforePLayingState()
 void Game::run()
 {
 	m_GameWindow.setFramerateLimit(60);
-
 	while (m_GameWindow.isOpen())
 	{
-		if (checkWin() == true) 
-		{
-			resetGame();
-			break;
-		}
-        
         processEvents();
-        update();
-		render();
+		if (spaceBarPressed())
+			isplaying = true;
+
+		if (isplaying)
+		{
+			if (checkWin() == true) 
+			{
+				resetGame();
+				break;
+			}
+			
+			update();
+			render();
+		}
+		
+		else
+			renderGameMenu();
 	}
 }
 
@@ -52,6 +61,7 @@ void Game::resetGame()
 {
 	m_LeftScore  = 0;
 	m_RightScore = 0;
+	isplaying = false;
 
 	setup();
 }
@@ -193,7 +203,7 @@ void Game::RightWallMovement()
 
 void Game::processEvents()
 {
-	sf::Event event;
+	static sf::Event event;
 	while (m_GameWindow.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)

@@ -2,16 +2,17 @@
 #include <iostream>
 #include <math.h>
 
-Game::Game() :
-	  m_GameWindow  (sf::VideoMode(WIDTH, HEIGHT), "Pong", sf::Style::Close),
-      m_LeftPaddle  (sf::Vector2f (14.0f, 120.0f)),    // left paddle width & height
-	  m_RightPaddle (sf::Vector2f (14.0f, 120.0f)),    // right paddle width & height
-	  m_ballVelocity(sf::Vector2f (BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y)),
-	  m_wallVelocity(sf::Vector2f (WALL_VELOCITY, WALL_VELOCITY)),
-      m_gameMenu    (sf::Vector2f(WIDTH, HEIGHT)),
-	  m_LeftScore (0),      // initial left & right score
-      m_RightScore(0),
-	  isplaying(false)
+Game::Game()
+	: m_GameWindow(sf::VideoMode(WIDTH, HEIGHT), "Pong", sf::Style::Close),
+	  m_LeftPaddle(sf::Vector2f(14.0f, 120.0f)),  // left paddle width & height
+	  m_RightPaddle(sf::Vector2f(14.0f, 120.0f)), // right paddle width & height
+	  m_ballVelocity(sf::Vector2f(BALL_INITIAL_VELOCITY_X, BALL_INITIAL_VELOCITY_Y)),
+	  m_wallVelocity(sf::Vector2f(WALL_VELOCITY, WALL_VELOCITY)),
+	  m_gameMenu(sf::Vector2f(WIDTH, HEIGHT)),
+	  m_LeftScore(0), // initial left & right score
+	  m_RightScore(0),
+	  isplaying(false),
+	  isWindowOpen(true)
 {
 	setup();
 }
@@ -22,13 +23,13 @@ Game::~Game()
 
 bool Game::spaceBarPressed()
 {
-    return sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+	return sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
 }
 
 void Game::renderGameMenu()
 {
-    m_GameWindow.draw(m_gameMenu);
-    m_GameWindow.display();
+	m_GameWindow.draw(m_gameMenu);
+	m_GameWindow.display();
 }
 
 void Game::run()
@@ -36,22 +37,22 @@ void Game::run()
 	m_GameWindow.setFramerateLimit(60);
 	while (m_GameWindow.isOpen())
 	{
-        processEvents();
+		processEvents();
 		if (spaceBarPressed())
 			isplaying = true;
 
 		if (isplaying)
 		{
-			if (checkWin() == true) 
+			if (checkWin() == true)
 			{
 				resetGame();
 				break;
 			}
-			
+
 			update();
 			render();
 		}
-		
+
 		else
 			renderGameMenu();
 	}
@@ -59,7 +60,7 @@ void Game::run()
 
 void Game::resetGame()
 {
-	m_LeftScore  = 0;
+	m_LeftScore = 0;
 	m_RightScore = 0;
 	isplaying = false;
 
@@ -97,7 +98,6 @@ void Game::updateScore()
 		// reset ball speed
 		m_ballVelocity = sf::Vector2f(BALL_INITIAL_VELOCITY_Y, BALL_INITIAL_VELOCITY_Y);
 	}
-
 }
 
 void Game::ballMovement()
@@ -128,18 +128,22 @@ void Game::onCollision()
 {
 	if (isColliding(m_LeftPaddle))
 	{
-		//increase ball veloctity at first collision
-		if (m_ballVelocity.x < 0) {
+		// increase ball veloctity at first collision
+		if (m_ballVelocity.x < 0)
+		{
 			m_ballVelocity.x = -BALL_VELOCITY;
 		}
-		else {
+		else
+		{
 			m_ballVelocity.x = BALL_VELOCITY;
 		}
 
-		if (m_ballVelocity.y < 0) {
+		if (m_ballVelocity.y < 0)
+		{
 			m_ballVelocity.y = -BALL_VELOCITY;
 		}
-		else {
+		else
+		{
 			m_ballVelocity.y = BALL_VELOCITY;
 		}
 
@@ -148,18 +152,22 @@ void Game::onCollision()
 
 	if (isColliding(m_RightPaddle))
 	{
-		//increase ball veloctity at first collision
-		if (m_ballVelocity.x < 0) {
+		// increase ball veloctity at first collision
+		if (m_ballVelocity.x < 0)
+		{
 			m_ballVelocity.x = -BALL_VELOCITY;
 		}
-		else {
+		else
+		{
 			m_ballVelocity.x = BALL_VELOCITY;
 		}
 
-		if (m_ballVelocity.y < 0) {
+		if (m_ballVelocity.y < 0)
+		{
 			m_ballVelocity.y = -BALL_VELOCITY;
 		}
-		else {
+		else
+		{
 			m_ballVelocity.y = BALL_VELOCITY;
 		}
 
@@ -171,7 +179,7 @@ void Game::LeftWallMovement()
 {
 	sf::Vector2f objectPos = m_LeftPaddle.getPosition();
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && (m_LeftPaddle.getPosition().y - m_LeftPaddle.getSize().y / 2) > 0 )
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && (m_LeftPaddle.getPosition().y - m_LeftPaddle.getSize().y / 2) > 0)
 	{
 		objectPos.y -= m_wallVelocity.y;
 		m_LeftPaddle.setPosition(objectPos);
@@ -194,7 +202,7 @@ void Game::RightWallMovement()
 		m_RightPaddle.setPosition(objectPos);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (m_RightPaddle.getPosition().y + m_RightPaddle.getSize().y / 2 ) < getWindowHeight())
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (m_RightPaddle.getPosition().y + m_RightPaddle.getSize().y / 2) < getWindowHeight())
 	{
 		objectPos.y += m_wallVelocity.y;
 		m_RightPaddle.setPosition(objectPos);
@@ -206,11 +214,10 @@ void Game::processEvents()
 	static sf::Event event;
 	while (m_GameWindow.pollEvent(event))
 	{
-		if (event.type == sf::Event::Closed)
+		if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			m_GameWindow.close();
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-			m_GameWindow.close();
+			isWindowOpen = false;
+		}
 	}
 }
 
@@ -240,9 +247,9 @@ void Game::render()
 void Game::setup()
 {
 	/// BALL ///
-	m_ball.setRadius(13.f);
+	m_ball.setRadius(10.f);
 	m_ball.setOrigin(m_ball.getRadius(), m_ball.getRadius());
-	m_ball.setPosition ((float)getWindowWidth() / 2, (float)getWindowHeight() / 2);
+	m_ball.setPosition((float)getWindowWidth() / 2, (float)getWindowHeight() / 2);
 	m_ball.setFillColor(sf::Color::White);
 
 	/// LEFT WALL ///
@@ -269,16 +276,14 @@ void Game::setup()
 	m_LeftScoreOnWindow.setCharacterSize(30);
 	m_LeftScoreOnWindow.setFont(m_scoreFont);
 	m_LeftScoreOnWindow.setPosition(m_middleLine.getPosition().x / 2, (float)getWindowHeight() / 12);
-	
+
 	/// LEFT SCORE TEXT ///
 	m_RightScoreOnWindow.setString("0");
 	m_RightScoreOnWindow.setCharacterSize(30);
 	m_RightScoreOnWindow.setFont(m_scoreFont);
 	m_RightScoreOnWindow.setPosition(m_middleLine.getPosition().x + m_middleLine.getPosition().x / 2, (float)getWindowHeight() / 12);
 
-    // GAME MENU
-    m_gameMenuText.loadFromFile("./resources/textures/Pong_game_menu.png");
-    m_gameMenu.setTexture(&m_gameMenuText);
-
+	// GAME MENU
+	m_gameMenuText.loadFromFile("./resources/textures/pong_game_menu.png");
+	m_gameMenu.setTexture(&m_gameMenuText);
 }
-

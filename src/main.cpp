@@ -6,6 +6,6 @@ int main()
 {
     Game game;
     
-    while (true)
+    while (game.isWindowOpen)
         game.run();
 }

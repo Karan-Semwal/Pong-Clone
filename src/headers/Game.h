@@ -5,7 +5,7 @@
 #define WIDTH  850
 #define HEIGHT 600
 
-#define BALL_VELOCITY 10.5f
+#define BALL_VELOCITY 8.0f
 #define WALL_VELOCITY 8.5f
 
 #define BALL_INITIAL_VELOCITY_X 5.f
@@ -37,6 +37,9 @@ public:
 	void ballMovement();
 	void LeftWallMovement();
 	void RightWallMovement();
+
+public:
+	bool isWindowOpen;
 
 private:
 	void processEvents();
